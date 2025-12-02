@@ -2,12 +2,12 @@
 
 A modern Ubuntu CLI toolkit — install essential dev tools and utilities in one command.
 
-Perfect for setting up new Ubuntu servers, Linode instances, or fresh installations with modern CLI tools.
+Perfect for setting up new Ubuntu servers, VM instances, or fresh installations with modern CLI tools.
 
 ## Quick Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<you>/ubuntu-kit/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.sh | sudo bash
 ```
 
 ## What Gets Installed
@@ -95,18 +95,10 @@ Ctrl+T        # Fuzzy search files
 - Root/sudo access
 - Internet connection
 
-## Tested On
-
-- Ubuntu 22.04 LTS
-- Ubuntu 24.04 LTS
-- Ubuntu 20.04 LTS
-- Linode instances
-- WSL2
-
 ## Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<you>/ubuntu-kit/main/uninstall.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/uninstall.sh | sudo bash
 ```
 
 Or run locally:
@@ -120,22 +112,9 @@ sudo ./uninstall.sh
 Always inspect scripts before running them:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/<you>/ubuntu-kit/main/install.sh | less
+curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.sh | less
 ```
 
 ## License
 
 MIT License - see LICENSE file for details.
-
-## Credits
-
-Tools included:
-- [eza](https://github.com/eza-community/eza)
-- [bat](https://github.com/sharkdp/bat)
-- [ripgrep](https://github.com/BurntSushi/ripgrep)
-- [fd](https://github.com/sharkdp/fd)
-- [fzf](https://github.com/junegunn/fzf)
-- [zoxide](https://github.com/ajeetdsouza/zoxide)
-- [yazi](https://github.com/sxyazi/yazi)
-- [glow](https://github.com/charmbracelet/glow)
-- [httpie](https://httpie.io/)

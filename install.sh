@@ -4,7 +4,7 @@
 # Install essential dev tools and modern utilities in one command
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/<you>/ubuntu-kit/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.sh | bash
 #   bash install.sh
 #
 
@@ -398,4 +398,4 @@ echo "  Ctrl+T           - Fuzzy search files"
 echo "  cat file.txt     - View file with syntax highlighting"
 echo "  h GET api.com    - Make HTTP requests"
 echo ""
-echo "Report issues: https://github.com/yourusername/ubuntu-kit/issues"
+echo "Report issues: https://github.com/takashito/ubuntu-kit/issues"
