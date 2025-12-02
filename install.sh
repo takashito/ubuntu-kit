@@ -153,12 +153,6 @@ else
 # ubuntu-kit - Modern CLI Utilities
 # ============================================
 
-# History settings
-HISTCONTROL=ignoredups:ignorespace
-shopt -s histappend
-HISTSIZE=1000
-HISTFILESIZE=2000
-
 # Bash completion
 if ! shopt -oq posix; then
     if [ -f /usr/share/bash-completion/bash_completion ]; then

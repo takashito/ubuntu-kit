@@ -35,7 +35,6 @@ curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.s
 - **bash-completion** - Tab completion for commands
 - **fzf integration** - Ctrl+R for history, Ctrl+T for files
 - **fzf-tab** - Fuzzy tab completion for cd/z
-- **History settings** - No duplicates, append mode
 
 ### Docker Shortcuts
 
