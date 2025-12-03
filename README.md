@@ -34,7 +34,6 @@ curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.s
 
 - **bash-completion** - Tab completion for commands
 - **fzf integration** - Ctrl+R for history, Ctrl+T for files
-- **fzf-tab** - Fuzzy tab completion for cd/z
 
 ### Docker Shortcuts
 
@@ -55,11 +54,9 @@ dlgf <c>      # docker logs -f
 
 ```bash
 ls            # eza --color=auto
-ll            # eza -alh
 la            # eza -al
 lt            # eza --tree
 cd <dir>      # zoxide + auto-list
-z <partial>   # Jump to frecent directory
 y             # yazi file manager (cd on exit)
 ```
 
