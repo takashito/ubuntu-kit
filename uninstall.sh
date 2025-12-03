@@ -80,6 +80,13 @@ if [[ -f /usr/local/bin/yazi ]]; then
     log_success "yazi removed"
 fi
 
+# Remove fzf (manually installed)
+if [[ -f /usr/local/bin/fzf ]]; then
+    log_info "Removing fzf..."
+    rm -f /usr/local/bin/fzf
+    log_success "fzf removed"
+fi
+
 # Remove apt repositories
 log_info "Removing apt repositories..."
 rm -f /etc/apt/sources.list.d/gierens.list

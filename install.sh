@@ -43,7 +43,6 @@ log_info "Installing fundamental tools..."
 apt-get install -y -qq \
     bat \
     httpie \
-    fzf \
     ripgrep \
     fd-find \
     jq \
@@ -58,6 +57,19 @@ apt-get install -y -qq \
     bash-completion
 
 log_success "Package installation complete"
+
+# Install latest fzf (apt version is too old for yazi integration)
+log_info "Installing fzf (latest)..."
+if ! command -v fzf &>/dev/null || [[ "$(fzf --version | cut -d' ' -f1)" < "0.50" ]]; then
+    FZF_VERSION=$(curl -sL https://api.github.com/repos/junegunn/fzf/releases/latest | jq -r .tag_name)
+    curl -fsSL "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION#v}-linux_amd64.tar.gz" -o /tmp/fzf.tar.gz
+    tar -xzf /tmp/fzf.tar.gz -C /usr/local/bin
+    chmod +x /usr/local/bin/fzf
+    rm -f /tmp/fzf.tar.gz
+    log_success "fzf ${FZF_VERSION} installed"
+else
+    log_info "fzf already installed ($(fzf --version | cut -d' ' -f1))"
+fi
 
 # Install eza (modern ls replacement)
 log_info "Installing eza..."
@@ -134,12 +146,6 @@ fi
 
 log_info "Configuring shell for user: $TARGET_USER"
 
-# Backup existing bashrc
-if [[ -f "$BASHRC" ]]; then
-    cp "$BASHRC" "${BASHRC}.backup.$(date +%Y%m%d_%H%M%S)"
-    log_info "Backed up existing .bashrc"
-fi
-
 # Check if already configured
 if grep -q "ubuntu-kit" "$BASHRC" 2>/dev/null; then
     log_warn "ubuntu-kit configuration already exists in $BASHRC"
@@ -153,61 +159,23 @@ else
 # ubuntu-kit - Modern CLI Utilities
 # ============================================
 
-# Bash completion
-if ! shopt -oq posix; then
-    if [ -f /usr/share/bash-completion/bash_completion ]; then
-        . /usr/share/bash-completion/bash_completion
-    elif [ -f /etc/bash_completion ]; then
-        . /etc/bash_completion
-    fi
-fi
+# Disable terminal bell on tab-completion
+bind 'set bell-style none' 2>/dev/null
 
-# zoxide - smarter cd
+# Add ~/.local/bin to PATH (for zoxide, etc.)
+export PATH="$HOME/.local/bin:$PATH"
+
+# zoxide - smarter cd (provides 'z' command for jumping)
 if command -v zoxide &>/dev/null; then
     eval "$(zoxide init bash)"
 fi
 
-# fzf - fuzzy finder key bindings and completion
-[ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
-[ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
-
-# fzf configuration
+# fzf - fuzzy finder configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-# fzf-tab: Use fzf for tab completion (bash)
-# Override default completion with fzf
-_fzf_complete_default() {
-    local cur="${COMP_WORDS[COMP_CWORD]}"
-    local completions
-    completions=$(compgen -f -- "$cur" 2>/dev/null)
-    if [[ -n "$completions" ]]; then
-        local selected
-        selected=$(echo "$completions" | fzf --height 40% --reverse --border)
-        if [[ -n "$selected" ]]; then
-            COMPREPLY=("$selected")
-        fi
-    fi
-}
-
-# Enhanced completion for common commands using fzf
-_fzf_complete_cd() {
-    local cur="${COMP_WORDS[COMP_CWORD]}"
-    local dirs
-    dirs=$(fd --type d --hidden --follow --exclude .git 2>/dev/null | head -500)
-    if [[ -n "$dirs" ]]; then
-        local selected
-        selected=$(echo "$dirs" | fzf --height 40% --reverse --border --query="$cur")
-        if [[ -n "$selected" ]]; then
-            COMPREPLY=("$selected")
-        fi
-    fi
-}
-
-# Bind fzf completion for specific commands
 if command -v fzf &>/dev/null; then
-    complete -F _fzf_complete_cd cd z
+    eval "$(fzf --bash)"
 fi
 
 # yazi - terminal file manager wrapper (changes dir on exit)
@@ -222,23 +190,19 @@ y() {
 }
 
 # Modern tool aliases
+alias so='source ~/.bashrc'
 alias cat='bat --paging=never'
 alias catp='bat'
 alias ls='eza --color=auto'
 alias ll='eza -alh'
 alias la='eza -al'
-alias l='eza -F'
-alias lt='eza --tree'
+alias lt='eza -alT -L 2'
 alias grep='rg'
 alias find='fd'
-
-# Utility aliases
 alias h='http'
-alias z='zoxide'
 
 # Wrapper for cd to use zoxide and auto-list files (interactive mode only)
 cd() {
-    # In non-interactive mode, use regular cd
     if [[ $- != *i* ]]; then
         builtin cd "$@"
         return
@@ -382,7 +346,7 @@ echo "  • glow      - Markdown renderer (glow README.md)"
 echo "  • yazi      - Terminal file manager (y)"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
-echo "  1. Run: ${BLUE}source $BASHRC${NC}"
+echo -e "  1. Run: ${BLUE}source $BASHRC${NC}"
 echo "  2. Or reconnect your SSH session"
 echo ""
 echo -e "${BLUE}Try it out:${NC}"
