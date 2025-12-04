@@ -216,11 +216,13 @@ cd() {
     fi
 }
 
-# Aliases for docker
-alias dcd='docker compose down'
-alias dcr='docker compose restart'
-
-dcp() {
+# Aliases for docker 
+alias dcpls='docker compose list'
+alias dcpps='docker compose ps'
+alias dcpd='docker compose down'
+alias dcpr='docker compose restart'
+alias dcpb='docker compose build'
+dcpu() {
     if [ -z "$1" ]; then
         docker compose up -d && docker compose logs -f
         return 1
@@ -229,17 +231,22 @@ dcp() {
 }
 
 alias dps='docker ps'
+alias dls='docker container ls -a'
+alias dst='docker container start'
+alias dsto='docker container stop'
+alias dstoa='docker stop $(docker ps -q)'
+alias drs='docker container restart'
+alias drm='docker container rm'
+alias 'drm!'='docker container rm -f'
+alias din='docker container inspect'
+alias dbl='docker build'
+alias drun='docker run --rm'
+
 alias dlg='docker logs'
 alias dlgf='docker logs -f'
 
-alias dst='docker container start'
-alias dstt='docker container stop'
-alias dsttt='docker stop $(docker ps -q)'
-alias drs='docker container restart'
-
 alias dx='docker exec'
 alias dxit='docker exec -it'
-
 dbash() {
     if [ -z "$1" ]; then
         echo "Usage: dbash <container_name_or_id>"
@@ -256,20 +263,13 @@ dsh() {
     docker exec -it "$1" /bin/sh
 }
 
-alias dcls='docker container ls -a'
-alias drm='docker container rm'
-alias 'drm!'='docker container rm -f'
-
 alias dils='docker image ls'
 alias dirm='docker image rm'
-alias dpu='docker pull'
+alias dipl='docker image pull'
 alias dib='docker image build'
 alias dii='docker image inspect'
 alias dipu='docker image push'
 alias dit='docker image tag'
-
-alias dbl='docker build'
-alias dcin='docker container inspect'
 
 alias dnc='docker network create'
 alias dncn='docker network connect'
