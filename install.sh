@@ -225,7 +225,7 @@ alias dcpr='docker compose restart'
 alias dcpb='docker compose build'
 dcpu() {
     if [ -z "$1" ]; then
-        docker compose up -d && docker compose logs -f
+        docker compose up -d
         return 1
     fi
     docker compose up -d "$1" && docker logs -f "$1"
