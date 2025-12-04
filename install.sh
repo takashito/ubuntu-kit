@@ -200,6 +200,7 @@ alias lt='eza -alT -L 2'
 alias grep='rg'
 alias find='fd'
 alias h='http'
+alias virc='vi ~/.bashrc'
 
 # Wrapper for cd to use zoxide and auto-list files (interactive mode only)
 cd() {
@@ -217,7 +218,7 @@ cd() {
 }
 
 # Aliases for docker 
-alias dcpls='docker compose list'
+alias dcpls='docker compose ls'
 alias dcpps='docker compose ps'
 alias dcpd='docker compose down'
 alias dcpr='docker compose restart'
@@ -287,35 +288,39 @@ dhelp() {
 Docker Shortcut Cheat Sheet
 ===========================
 Compose:
-  dcp [svc]   up -d (+ logs)     dcd   down       dcr   restart
+  dcpls       list projects      dcpps       ps
+  dcpu [svc]  up -d (+ logs)     dcpd        down
+  dcpr        restart            dcpb        build
 
 Containers:
-  dps         running            dcls list
-  dst <c>     start              dstt <c>  stop   drs <c>  restart
-  drm <c>     remove             drm! <c> force   dcin <c> inspect
-  dpo <c>     ports
+  dps         running            dls         list all
+  dst <c>     start              dsto <c>    stop
+  dstoa       stop all           drs  <c>    restart
+  drm <c>     remove             drm! <c>    force rm
+  din <c>     inspect            dpo  <c>    ports
+  dbl         build              drun        run --rm
 
 Exec / Shell:
-  dx <c> <cmd>      exec           dsh <c>         /bin/sh
-  dxit <c> <cmd>    exec -it     dbash <c>       /bin/bash
+  dex <c> <cmd>     exec         dexit <c> <cmd> exec -it
+  dsh <c>           /bin/sh      dbash <c>       /bin/bash
 
 Logs:
-  dlg <c>    logs            dlgf <c>   follow logs
+  dlg <c>     logs               dlgf <c>    follow logs
 
 Images:
-  dils        list           dirm <img>   rm
-  dpu <img>   pull           dib <dir>    build
-  dii <img>   inspect        dipu <img>   push
-  dit s d     tag
+  dils         list              dirm <img>  rm
+  dipl <img>   pull              dib  <dir>  build
+  dii  <img>   inspect           dipu <img>  push
+  dit  <s> <t> tag
 
 Networks:
-  dnls         list          dnc <n>     create
-  dncn n c     connect       dndcn n c   disconnect
-  dni <n>      inspect       dnrm <n>    rm
+  dnls         list              dnc <n>        create
+  dncn <n> <c> connect           dndcn <n> <c>  disconnect
+  dni <n>      inspect           dnrm <n>       rm
 
 Volumes:
-  dvls         list          dvi <v>     inspect
-  dvprune      prune unused
+  dvls        list               dvi <v>     inspect
+  dvprune     prune unused
 
 DHELP
 }
