@@ -18,10 +18,10 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Logging
-log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
-log_success() { echo -e "${GREEN}[✓]${NC} $*"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $*"; exit 1; }
+info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+success() { echo -e "${GREEN}[✓]${NC} $*"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
+error() { echo -e "${RED}[ERROR]${NC} $*"; exit 1; }
 
 # Banner
 echo -e "${BLUE}Installing modern CLI utilities...${NC}\n"
@@ -30,16 +30,16 @@ echo -e "${BLUE}Installing modern CLI utilities...${NC}\n"
 if [[ -f /etc/os-release ]]; then
     source /etc/os-release
     if [[ "$ID" != "ubuntu" ]]; then
-        log_warn "Detected $ID (not Ubuntu). Some packages may not be available."
+        warn "Detected $ID (not Ubuntu). Some packages may not be available."
     fi
 fi
 
 # Update package list
-log_info "Updating package list..."
+info "Updating package list..."
 apt-get update -qq
 
 # Install fundamental packages
-log_info "Installing fundamental tools..."
+info "Installing fundamental tools..."
 apt-get install -y -qq \
     bat \
     httpie \
@@ -56,23 +56,23 @@ apt-get install -y -qq \
     tldr \
     bash-completion
 
-log_success "Package installation complete"
+success "Package installation complete"
 
 # Install latest fzf (apt version is too old for yazi integration)
-log_info "Installing fzf (latest)..."
+info "Installing fzf (latest)..."
 if ! command -v fzf &>/dev/null || [[ "$(fzf --version | cut -d' ' -f1)" < "0.50" ]]; then
     FZF_VERSION=$(curl -sL https://api.github.com/repos/junegunn/fzf/releases/latest | jq -r .tag_name)
     curl -fsSL "https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION#v}-linux_amd64.tar.gz" -o /tmp/fzf.tar.gz
     tar -xzf /tmp/fzf.tar.gz -C /usr/local/bin
     chmod +x /usr/local/bin/fzf
     rm -f /tmp/fzf.tar.gz
-    log_success "fzf ${FZF_VERSION} installed"
+    success "fzf ${FZF_VERSION} installed"
 else
-    log_info "fzf already installed ($(fzf --version | cut -d' ' -f1))"
+    info "fzf already installed ($(fzf --version | cut -d' ' -f1))"
 fi
 
 # Install eza (modern ls replacement)
-log_info "Installing eza..."
+info "Installing eza..."
 if ! command -v eza &>/dev/null; then
     apt-get install -y -qq gpg
     mkdir -p /etc/apt/keyrings
@@ -81,35 +81,35 @@ if ! command -v eza &>/dev/null; then
     chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
     apt-get update -qq
     apt-get install -y -qq eza
-    log_success "eza installed"
+    success "eza installed"
 else
-    log_info "eza already installed"
+    info "eza already installed"
 fi
 
 # Install zoxide (smarter cd command)
-log_info "Installing zoxide..."
+info "Installing zoxide..."
 if ! command -v zoxide &>/dev/null; then
     curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
-    log_success "zoxide installed"
+    success "zoxide installed"
 else
-    log_info "zoxide already installed"
+    info "zoxide already installed"
 fi
 
 # Install glow (markdown renderer)
-log_info "Installing glow..."
+info "Installing glow..."
 if ! command -v glow &>/dev/null; then
     mkdir -p /etc/apt/keyrings
     curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg
     echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | tee /etc/apt/sources.list.d/charm.list
     apt-get update -qq
     apt-get install -y -qq glow
-    log_success "glow installed"
+    success "glow installed"
 else
-    log_info "glow already installed"
+    info "glow already installed"
 fi
 
 # Install yazi (terminal file manager)
-log_info "Installing yazi..."
+info "Installing yazi..."
 if ! command -v yazi &>/dev/null; then
     YAZI_VERSION=$(curl -sL https://api.github.com/repos/sxyazi/yazi/releases/latest | jq -r '.tag_name')
     curl -fsSL "https://github.com/sxyazi/yazi/releases/download/${YAZI_VERSION}/yazi-x86_64-unknown-linux-gnu.zip" -o /tmp/yazi.zip
@@ -118,22 +118,26 @@ if ! command -v yazi &>/dev/null; then
     mv /tmp/yazi/yazi-x86_64-unknown-linux-gnu/ya /usr/local/bin/
     chmod +x /usr/local/bin/yazi /usr/local/bin/ya
     rm -rf /tmp/yazi /tmp/yazi.zip
-    log_success "yazi installed"
+    success "yazi installed"
 else
-    log_info "yazi already installed"
+    info "yazi already installed"
 fi
 
+# Install claude code
+info "Installing claude code..."
+curl -fsSL https://claude.ai/install.sh | bash
+
 # Create bat alias (Ubuntu names it batcat)
-log_info "Creating symbolic links..."
+info "Creating symbolic links..."
 if [ ! -f /usr/local/bin/bat ]; then
     ln -sf /usr/bin/batcat /usr/local/bin/bat
-    log_success "bat -> batcat"
+    success "bat -> batcat"
 fi
 
 # Create fd alias (Ubuntu names it fdfind)
 if [ ! -f /usr/local/bin/fd ]; then
     ln -sf /usr/bin/fdfind /usr/local/bin/fd
-    log_success "fd -> fdfind"
+    success "fd -> fdfind"
 fi
 
 # Determine which user's bashrc to modify
@@ -144,15 +148,15 @@ else
     BASHRC="/home/$TARGET_USER/.bashrc"
 fi
 
-log_info "Configuring shell for user: $TARGET_USER"
+info "Configuring shell for user: $TARGET_USER"
 
 # Check if already configured
 if grep -q "ubuntu-kit" "$BASHRC" 2>/dev/null; then
-    log_warn "ubuntu-kit configuration already exists in $BASHRC"
-    log_warn "Remove existing config or restore from backup to reinstall"
+    warn "ubuntu-kit configuration already exists in $BASHRC"
+    warn "Remove existing config or restore from backup to reinstall"
 else
     # Add shell integrations
-    log_info "Adding shell integrations to $BASHRC..."
+    info "Adding shell integrations to $BASHRC..."
     cat >> "$BASHRC" << 'EOF'
 
 # ============================================
@@ -326,7 +330,7 @@ DHELP
 }
 
 EOF
-    log_success "Shell configuration added"
+    success "Shell configuration added"
 fi
 
 # Summary
