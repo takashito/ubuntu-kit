@@ -220,6 +220,8 @@ cd() {
         __zoxide_z "$@" && la
     fi
 }
+alias ..="cd .."
+alias ...="cd ../.."
 
 # Aliases for docker 
 alias dcpls='docker compose ls'
