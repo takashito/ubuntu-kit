@@ -1,8 +1,6 @@
 # ubuntu-kit
 
-A modern Ubuntu CLI toolkit — install essential dev tools and utilities in one command.
-
-Perfect for setting up new Ubuntu servers, VM instances, or fresh installations with modern CLI tools.
+A modern Ubuntu CLI toolkit — install essential dev tools and utilities in one command. Perfect for setting up new Ubuntu servers, VM instances, or fresh installations with modern CLI tools.
 
 ## Quick Install
 
@@ -29,6 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.s
 | **ncdu** | `du` | Interactive disk usage |
 | **btop** | `top`/`htop` | Beautiful system monitor |
 | **tldr** | `man` | Simplified man pages |
+| **claude** | - | AI coding assistant (Claude Code) |
 
 ### Shell Enhancements
 
@@ -40,8 +39,8 @@ curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.s
 Run `dhelp` to see the full cheat sheet. Highlights:
 
 ```bash
-dcp           # docker compose up -d + logs
-dcd           # docker compose down
+dcpu [svc]    # docker compose up -d (+ logs)
+dcpd          # docker compose down
 dps           # docker ps
 dbash <c>     # exec -it /bin/bash
 dsh <c>       # exec -it /bin/sh
