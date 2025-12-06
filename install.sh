@@ -224,12 +224,16 @@ alias ..="cd .."
 alias ...="cd ../.."
 
 # Aliases for docker 
-alias dcpls='docker compose ls'
-alias dcpps='docker compose ps'
-alias dcpd='docker compose down'
-alias dcpr='docker compose restart'
-alias dcpb='docker compose build'
-dcpu() {
+alias dcls='docker compose ls'
+alias dcps='docker compose ps'
+alias dcd='docker compose down'
+alias dcb='docker compose build'
+alias dcst='docker compose start'
+alias dcsto='docker compose stop'
+alias dcrs='docker compose restart'
+alias dcrm='docker compose rm -fv'
+alias dcrma='docker-compose down --rmi all --volumes --remove-orphans'
+dcu() {
     if [ -z "$1" ]; then
         docker compose up -d
         return 1
@@ -252,8 +256,8 @@ alias drun='docker run --rm'
 alias dlg='docker logs'
 alias dlgf='docker logs -f'
 
-alias dx='docker exec'
-alias dxit='docker exec -it'
+alias dex='docker exec'
+alias dexi='docker exec -it'
 dbash() {
     if [ -z "$1" ]; then
         echo "Usage: dbash <container_name_or_id>"
@@ -275,7 +279,7 @@ alias dirm='docker image rm'
 alias dipl='docker image pull'
 alias dib='docker image build'
 alias dii='docker image inspect'
-alias dipu='docker image push'
+alias dipush='docker image push'
 alias dit='docker image tag'
 
 alias dnc='docker network create'
@@ -286,47 +290,50 @@ alias dnls='docker network ls'
 alias dnrm='docker network rm'
 alias dpo='docker container port'
 alias dvi='docker volume inspect'
+alias dvrm='docker volume remove'
 alias dvls='docker volume ls'
-alias dvprune='docker volume prune'
+alias dvpr='docker volume prune'
 
 dhelp() {
     cat <<'DHELP'
 Docker Shortcut Cheat Sheet
 ===========================
 Compose:
-  dcpls       list projects      dcpps       ps
-  dcpu [svc]  up -d (+ logs)     dcpd        down
-  dcpr        restart            dcpb        build
+  dcls        list projects      dcps        ps
+  dcu [svc]   up -d (+ logs)     dcd         down
+  dcst        start              dcsto       stop
+  dcrs        restart            dcb         build
+  dcrm        rm -fv             dcrma       down --rmi all
 
 Containers:
   dps         running            dls         list all
   dst <c>     start              dsto <c>    stop
-  dstoa       stop all           drs  <c>    restart
+  dstoa       stop all           drs <c>     restart
   drm <c>     remove             drm! <c>    force rm
-  din <c>     inspect            dpo  <c>    ports
+  din <c>     inspect            dpo <c>     ports
   dbl         build              drun        run --rm
 
 Exec / Shell:
-  dex <c> <cmd>     exec         dexit <c> <cmd> exec -it
+  dex <c> <cmd>     exec         dexi <c> <cmd>  exec -it
   dsh <c>           /bin/sh      dbash <c>       /bin/bash
 
 Logs:
   dlg <c>     logs               dlgf <c>    follow logs
 
 Images:
-  dils         list              dirm <img>  rm
-  dipl <img>   pull              dib  <dir>  build
-  dii  <img>   inspect           dipu <img>  push
-  dit  <s> <t> tag
+  dils        list               dirm <img>  rm
+  dipl <img>  pull               dib <dir>   build
+  dii <img>   inspect            dipush      push
+  dit <s> <t> tag
 
 Networks:
-  dnls         list              dnc <n>        create
-  dncn <n> <c> connect           dndcn <n> <c>  disconnect
-  dni <n>      inspect           dnrm <n>       rm
+  dnls        list               dnc <n>     create
+  dncn <n> <c>  connect          dndcn <n> <c>  disconnect
+  dni <n>     inspect            dnrm <n>    rm
 
 Volumes:
   dvls        list               dvi <v>     inspect
-  dvprune     prune unused
+  dvrm <v>    remove             dvpr        prune
 
 DHELP
 }
