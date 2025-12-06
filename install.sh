@@ -204,7 +204,7 @@ alias lt='eza -alT -L 2'
 alias grep='rg'
 alias find='fd'
 alias h='http'
-alias virc='vi ~/.bashrc'
+alias bashrc='vi ~/.bashrc'
 
 # Wrapper for cd to use zoxide and auto-list files (interactive mode only)
 cd() {
@@ -232,7 +232,7 @@ alias dcst='docker compose start'
 alias dcsto='docker compose stop'
 alias dcrs='docker compose restart'
 alias dcrm='docker compose rm -fv'
-alias dcrma='docker-compose down --rmi all --volumes --remove-orphans'
+alias dcrma='docker compose down --rmi all --volumes --remove-orphans'
 dcu() {
     if [ -z "$1" ]; then
         docker compose up -d
