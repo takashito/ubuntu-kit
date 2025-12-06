@@ -232,7 +232,7 @@ alias dcst='docker compose start'
 alias dcsto='docker compose stop'
 alias dcrs='docker compose restart'
 alias dcrm='docker compose rm -fv'
-alias dcrma='docker compose down --rmi all --volumes --remove-orphans'
+alias dcrma='docker compose down --volumes --remove-orphans'
 dcu() {
     if [ -z "$1" ]; then
         docker compose up -d
