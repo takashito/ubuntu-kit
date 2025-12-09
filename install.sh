@@ -205,6 +205,7 @@ alias grep='rg'
 alias find='fd'
 alias h='http'
 alias bashrc='vi ~/.bashrc'
+alias myip='curl inet-ip.info'
 
 # Wrapper for cd to use zoxide and auto-list files (interactive mode only)
 cd() {
