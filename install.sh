@@ -47,6 +47,7 @@ apt-get install -y -qq \
     fd-find \
     jq \
     ncdu \
+    duf \
     btop \
     git \
     curl \
@@ -121,6 +122,15 @@ if ! command -v yazi &>/dev/null; then
     success "yazi installed"
 else
     info "yazi already installed"
+fi
+
+# Install lazydocker
+info "Installing lazydocker..."
+if ! command -v lazydocker &>/dev/null; then
+    curl -fsSL https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+    success "lazydocker installed"
+else
+    info "lazydocker already installed"
 fi
 
 # Install claude code
@@ -228,9 +238,9 @@ alias ...="cd ../.."
 alias dcls='docker compose ls'
 alias dcps='docker compose ps'
 alias dcd='docker compose down'
-alias dcb='docker compose build'
+alias dcbl='docker compose build'
 alias dcst='docker compose start'
-alias dcsto='docker compose stop'
+alias dcsp='docker compose stop'
 alias dcrs='docker compose restart'
 alias dcrm='docker compose rm -fv'
 alias dcrma='docker compose down --volumes --remove-orphans'
@@ -245,8 +255,8 @@ dcu() {
 alias dps='docker ps'
 alias dls='docker container ls -a'
 alias dst='docker container start'
-alias dsto='docker container stop'
-alias dstoa='docker stop $(docker ps -q)'
+alias dsp='docker container stop'
+alias dspa='docker stop $(docker ps -q)'
 alias drs='docker container restart'
 alias drm='docker container rm'
 alias 'drm!'='docker container rm -f'
@@ -254,8 +264,8 @@ alias din='docker container inspect'
 alias dbl='docker build'
 alias drun='docker run --rm'
 
-alias dlg='docker logs'
-alias dlgf='docker logs -f'
+alias dlg='docker logs -f'
+alias dll='docker logs'
 
 alias dex='docker exec'
 alias dexi='docker exec -it'
@@ -302,14 +312,14 @@ Docker Shortcut Cheat Sheet
 Compose:
   dcls        list projects      dcps        ps
   dcu [svc]   up -d (+ logs)     dcd         down
-  dcst        start              dcsto       stop
-  dcrs        restart            dcb         build
-  dcrm        rm -fv             dcrma       down --rmi all
+  dcst        start              dcsp        stop
+  dcrs        restart            dcbl        build
+  dcrm        rm -fv             dcrma       down --volumes --remove-orphans
 
 Containers:
   dps         running            dls         list all
-  dst <c>     start              dsto <c>    stop
-  dstoa       stop all           drs <c>     restart
+  dst <c>     start              dsp <c>     stop
+  dspa        stop all           drs <c>     restart
   drm <c>     remove             drm! <c>    force rm
   din <c>     inspect            dpo <c>     ports
   dbl         build              drun        run --rm
@@ -319,7 +329,7 @@ Exec / Shell:
   dsh <c>           /bin/sh      dbash <c>       /bin/bash
 
 Logs:
-  dlg <c>     logs               dlgf <c>    follow logs
+  dlg <c>     logs -f            dll <c>     logs
 
 Images:
   dils        list               dirm <img>  rm
@@ -350,19 +360,21 @@ echo -e "${GREEN}✓ ubuntu-kit installation complete!${NC}"
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 echo "Installed tools:"
-echo "  • eza       - Modern ls replacement (ls, ll, la, lt)"
-echo "  • bat       - Better cat with syntax highlighting"
-echo "  • httpie    - User-friendly HTTP client (h)"
-echo "  • fzf       - Fuzzy finder (Ctrl+R history, Ctrl+T files)"
-echo "  • zoxide    - Smarter cd command (z)"
-echo "  • ripgrep   - Fast grep alternative (rg)"
-echo "  • fd        - Fast find alternative (fd)"
-echo "  • jq        - JSON processor"
-echo "  • ncdu      - Disk usage analyzer"
-echo "  • btop      - System monitor"
-echo "  • tldr      - Simplified man pages"
-echo "  • glow      - Markdown renderer (glow README.md)"
-echo "  • yazi      - Terminal file manager (y)"
+echo "  • eza         - Modern ls replacement (ls, ll, la, lt)"
+echo "  • bat         - Better cat with syntax highlighting"
+echo "  • httpie      - User-friendly HTTP client (h)"
+echo "  • fzf         - Fuzzy finder (Ctrl+R history, Ctrl+T files)"
+echo "  • zoxide      - Smarter cd command (z)"
+echo "  • ripgrep     - Fast grep alternative (rg)"
+echo "  • fd          - Fast find alternative (fd)"
+echo "  • jq          - JSON processor"
+echo "  • ncdu        - Disk usage analyzer"
+echo "  • duf         - Modern disk usage/free utility"
+echo "  • btop        - System monitor"
+echo "  • tldr        - Simplified man pages"
+echo "  • glow        - Markdown renderer (glow README.md)"
+echo "  • yazi        - Terminal file manager (y)"
+echo "  • lazydocker  - Terminal UI for Docker (lazydocker)"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo -e "  1. Run: ${BLUE}source $BASHRC${NC}"
