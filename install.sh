@@ -267,6 +267,8 @@ alias drun='docker run --rm'
 alias dlg='docker logs -f'
 alias dll='docker logs'
 
+alias dcp='docker cp'
+
 alias dex='docker exec'
 alias dexi='docker exec -it'
 dbash() {
@@ -323,6 +325,7 @@ Containers:
   drm <c>     remove             drm! <c>    force rm
   din <c>     inspect            dpo <c>     ports
   dbl         build              drun        run --rm
+  dcp <src> <dst>  copy files
 
 Exec / Shell:
   dex <c> <cmd>     exec         dexi <c> <cmd>  exec -it
