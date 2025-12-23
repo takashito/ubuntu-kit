@@ -239,6 +239,11 @@ copy() {
   printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
 }
 
+# Caddy 
+caddydomain () {
+    docker compose exec caddy wget -qO- http://127.0.0.1:2019/config/ | jq -r '.. | objects | select(has("host")) | .host[]'
+}
+
 # Aliases for docker 
 alias ld='lazydocker'
 alias dcls='docker compose ls'
