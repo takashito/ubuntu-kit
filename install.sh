@@ -205,8 +205,8 @@ y() {
 
 # Modern tool aliases
 alias so='source ~/.bashrc'
-alias cat='bat --paging=never'
-alias catp='bat'
+alias cat='bat'
+alias catp='bat --paging=never'
 alias ls='eza --color=auto'
 alias ll='eza -alh'
 alias la='eza -al'
@@ -234,7 +234,13 @@ cd() {
 alias ..="cd .."
 alias ...="cd ../.."
 
+# Takes stdin, sends to local clipboard
+copy() {
+  printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
+}
+
 # Aliases for docker 
+alias ld='lazydocker'
 alias dcls='docker compose ls'
 alias dcps='docker compose ps'
 alias dcd='docker compose down'
@@ -379,15 +385,6 @@ echo "  • glow        - Markdown renderer (glow README.md)"
 echo "  • yazi        - Terminal file manager (y)"
 echo "  • lazydocker  - Terminal UI for Docker (lazydocker)"
 echo ""
-echo -e "${YELLOW}Next steps:${NC}"
-echo -e "  1. Run: ${BLUE}source $BASHRC${NC}"
-echo "  2. Or reconnect your SSH session"
 echo ""
-echo -e "${BLUE}Try it out:${NC}"
-echo "  z <dir>          - Jump to a directory you've visited"
-echo "  Ctrl+R           - Fuzzy search command history"
-echo "  Ctrl+T           - Fuzzy search files"
-echo "  cat file.txt     - View file with syntax highlighting"
-echo "  h GET api.com    - Make HTTP requests"
-echo ""
-echo "Report issues: https://github.com/takashito/ubuntu-kit/issues"
+read -rp "Press Enter to continue..."
+bash -c "source $BASHRC"
