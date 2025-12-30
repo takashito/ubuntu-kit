@@ -108,6 +108,165 @@ else
     info "yazi already installed"
 fi
 
+# Install tmux plugin manager
+info "Installing tmux plugin manager..."
+if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+    success "tpm installed"
+else
+    info "tpm already installed"
+fi
+
+# Create tmux config
+info "Creating tmux config..."
+mkdir -p ~/.config/tmux
+cat > ~/.config/tmux/tmux.conf << 'TMUXCONF'
+# =========================================
+#  Global Option
+# =========================================
+
+# escape sequence passthrough
+set -g allow-passthrough on
+
+# Change prefix to Ctrl + s
+set-option -g prefix C-s
+unbind C-b
+
+# Change Index
+set -g base-index 1
+set -g pane-base-index 1
+set -g renumber-windows on
+
+# enable mouse & clipboard
+set -g mouse on
+set -g set-clipboard on
+
+# enable RGB
+set -g default-terminal 'tmux-256color'
+
+# VI mode
+setw -g mode-keys vi
+
+# remove delay for exiting insert mode with ESC in Neovim
+set -sg escape-time 10
+
+# make key repeat bit longer
+set -g repeat-time 800
+
+# =========================================
+#  Plugin Setting
+# =========================================
+
+# Plugin Manager
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# auto saving session
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @resurrect-save 'S'
+set -g @resurrect-restore 'R'
+set -g @continuum-restore 'on'
+set -g @continuum-save-interval '1'
+
+# better theme
+set -g @plugin 'wfxr/tmux-power'
+if -F '#{SSH_CONNECTION}' \
+  'set -g @tmux_power_theme "orange"' \
+  'set -g @tmux_power_theme "moon"'
+
+# show tmux mode
+set -g @plugin 'MunifTanjim/tmux-mode-indicator'
+if -F '#{SSH_CONNECTION}' "set -g @theme_color '#ffa500'" "set -g @theme_color '#00aeac'"
+set -g @mode_indicator_empty_mode_style 'fg=#262626,bg=#{@theme_color}'
+set -g status-left "#{tmux_mode_indicator}#[fg=#262626,bg=#{@theme_color},bold]  #(ps -t #{pane_tty} -o user= --sort start | tail -1)@#h #[fg=#{@theme_color},bg=#3a3a3a,nobold]#[fg=#{@theme_color},bg=#3a3a3a]  #S #[fg=#3a3a3a,bg=#262626]"
+run-shell '~/.config/tmux/plugins/tmux-mode-indicator/mode_indicator.tmux'
+
+# zoom pane to new window
+set -g @plugin 'jaclu/tmux-power-zoom'
+set -g @power_zoom_trigger 'm' # <leaqder> M to zoom or unzoom
+run '~/.config/tmux/plugins/tmux-power-zoom/power-zoom.tmux'
+
+# jumb to word with visual mode
+set -g @plugin "roy2220/easyjump.tmux"
+set -g @easyjump-key-binding "f"
+set -g @easyjump-label-chars "fdsagrewqtvcxzb1234567890"
+set -g @easyjump-label-attrs "\e[1m\e[48;5;198m"
+set -g @easyjump-text-attrs "\e[0m\e[38;5;246m"
+run-shell '~/.config/tmux/plugins/easyjump.tmux/easyjump.tmux'
+
+# auto resize pane
+set -g @plugin 'graemedavidson/tmux-pane-focus'
+set -g @pane-focus-size on
+set -g @pane-focus-size '60'
+set -g @pane-focus-direction '-' # change size + : both  | : width only - : height only
+run-shell '~/.config/tmux/plugins/tmux-pane-focus/focus.tmux'
+
+# popup tmux operation with fzf
+set -g @plugin 'sainnhe/tmux-fzf'
+
+# =========================================
+#  Keybind Setting
+# =========================================
+
+# reload config
+bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
+
+# send ctrl + s key
+bind C-s send-keys C-s
+
+# start copy mode when scroll up
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
+
+# exit copy mode when scroll down bottom
+bind -n WheelDownPane select-pane -t= \; send-keys -M
+
+# on Copyy mode, v to start selection,  y for yank, escape to exit copy mode
+bind -T copy-mode-vi 'v' send -X begin-selection
+bind -T copy-mode-vi 'y' send -X copy-selection-and-cancel
+bind -T copy-mode-vi Escape send -X cancel
+
+# Pane Operation and Navigation
+bind | split-window -h
+bind - split-window -v
+bind -r C-j resize-pane -L 5
+bind -r C-k resize-pane -D 5
+bind -r C-i resize-pane -U 5
+bind -r C-l resize-pane -R 5
+bind -r j 'select-pane -L'
+bind -r k 'select-pane -D'
+bind -r i 'select-pane -U'
+bind -r l 'select-pane -R'
+
+# bind -r m resize-pane -Z
+bind x kill-pane
+bind v copy-mode
+
+# Swtch to previous-window
+bind b previous-window
+
+# popup pane
+bind space display-popup
+
+# send Ctrl+C to all pane
+bind C-c "setw synchronize-panes on \; send-keys C-c \; setw synchronize-panes off"
+
+# Toggle pane synchronization with prefix + S
+bind y setw synchronize-panes \; #display-message "synchronize-panes #{?pane_synchronized,on,off}"
+
+# Pop-Up Help
+bind ? display-popup -E "tmux list-keys -a -N | fzf --ansi --reverse --prompt='🔍 '"
+
+# Initialize TMUX plugin manager
+run '~/.config/tmux/plugins/tpm/tpm'
+TMUXCONF
+success "tmux config created"
+
+# Install tmux plugins
+info "Installing tmux plugins..."
+~/.config/tmux/plugins/tpm/bin/install_plugins
+success "tmux plugins installed"
+
 # Create bat alias (Ubuntu names it batcat)
 info "Creating symbolic links..."
 if [ ! -f /usr/local/bin/bat ]; then
