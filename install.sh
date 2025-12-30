@@ -42,19 +42,16 @@ apt-get update -qq
 info "Installing fundamental tools..."
 apt-get install -y -qq \
     bat \
-    httpie \
     ripgrep \
     fd-find \
     jq \
-    ncdu \
-    duf \
     btop \
     git \
     curl \
     wget \
     unzip \
     tree \
-    tldr \
+    tmux \
     bash-completion
 
 success "Package installation complete"
@@ -96,19 +93,6 @@ else
     info "zoxide already installed"
 fi
 
-# Install glow (markdown renderer)
-info "Installing glow..."
-if ! command -v glow &>/dev/null; then
-    mkdir -p /etc/apt/keyrings
-    curl -fsSL https://repo.charm.sh/apt/gpg.key | gpg --dearmor -o /etc/apt/keyrings/charm.gpg
-    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | tee /etc/apt/sources.list.d/charm.list
-    apt-get update -qq
-    apt-get install -y -qq glow
-    success "glow installed"
-else
-    info "glow already installed"
-fi
-
 # Install yazi (terminal file manager)
 info "Installing yazi..."
 if ! command -v yazi &>/dev/null; then
@@ -123,19 +107,6 @@ if ! command -v yazi &>/dev/null; then
 else
     info "yazi already installed"
 fi
-
-# Install lazydocker
-info "Installing lazydocker..."
-if ! command -v lazydocker &>/dev/null; then
-    curl -fsSL https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
-    success "lazydocker installed"
-else
-    info "lazydocker already installed"
-fi
-
-# Install claude code
-info "Installing claude code..."
-curl -fsSL https://claude.ai/install.sh | bash
 
 # Create bat alias (Ubuntu names it batcat)
 info "Creating symbolic links..."
@@ -239,13 +210,33 @@ copy() {
   printf "\033]52;c;%s\007" "$(base64 | tr -d '\n')"
 }
 
-# Caddy 
+# Caddy
 caddydomain () {
     docker compose exec caddy wget -qO- http://127.0.0.1:2019/config/ | jq -r '.. | objects | select(has("host")) | .host[]'
 }
 
-# Aliases for docker 
-alias ld='lazydocker'
+# Auto-install wrapper: runs command or installs it first
+_autoinstall() {
+    local cmd="$1" install_cmd="$2"; shift 2
+    type -P "$cmd" &>/dev/null || { echo "$cmd not found, installing..."; eval "$install_cmd"; export PATH="$HOME/.local/bin:$PATH"; }
+    "$(type -P "$cmd")" "$@"
+}
+
+ncdu() { _autoinstall ncdu "apt-get install -y -qq ncdu" "$@"; }
+duf() { _autoinstall duf "apt-get install -y -qq duf" "$@"; }
+tldr() { _autoinstall tldr "apt-get install -y -qq tldr" "$@"; }
+glow() { _autoinstall glow "curl -sL https://api.github.com/repos/charmbracelet/glow/releases/latest | jq -r '.assets[] | select(.name | contains(\"Linux_x86_64.tar.gz\")) | .browser_download_url' | xargs curl -sL | tar xz -C /usr/local/bin glow" "$@"; }
+http() { _autoinstall http "apt-get install -y -qq httpie" "$@"; }
+
+ld() { _autoinstall lazydocker "curl -fsSL https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash" "$@"; }
+mise() { _autoinstall mise "curl -sL https://mise.run | sh" "$@"; }
+uv() { _autoinstall uv "curl -LsSf https://astral.sh/uv/install.sh | sh" "$@"; }
+sqlit() { _autoinstall sqlit "uv tool install sqlit-tui --with psycopg2-binary" "$@"; }
+claude() { _autoinstall claude "curl -fsSL https://claude.ai/install.sh | sh" "$@"; }
+node() { _autoinstall node "mise use -g node@lts" "$@"; }
+npx() { _autoinstall npx "mise use -g node@lts" "$@"; }
+
+# Aliases for docker
 alias dcls='docker compose ls'
 alias dcps='docker compose ps'
 alias dcd='docker compose down'
@@ -376,19 +367,27 @@ echo ""
 echo "Installed tools:"
 echo "  • eza         - Modern ls replacement (ls, ll, la, lt)"
 echo "  • bat         - Better cat with syntax highlighting"
-echo "  • httpie      - User-friendly HTTP client (h)"
 echo "  • fzf         - Fuzzy finder (Ctrl+R history, Ctrl+T files)"
 echo "  • zoxide      - Smarter cd command (z)"
 echo "  • ripgrep     - Fast grep alternative (rg)"
 echo "  • fd          - Fast find alternative (fd)"
 echo "  • jq          - JSON processor"
+echo "  • btop        - System monitor"
+echo "  • tmux        - Terminal multiplexer"
+echo "  • yazi        - Terminal file manager (y)"
+echo ""
+echo "Auto-install on first use:"
+echo "  • uv          - Python package installer"
+echo "  • sqlit       - SQL TUI for databases"
+echo "  • glow        - Markdown renderer"
+echo "  • mise        - Dev tool version manager"
+echo "  • ld          - lazydocker (Docker TUI)"
 echo "  • ncdu        - Disk usage analyzer"
 echo "  • duf         - Modern disk usage/free utility"
-echo "  • btop        - System monitor"
 echo "  • tldr        - Simplified man pages"
-echo "  • glow        - Markdown renderer (glow README.md)"
-echo "  • yazi        - Terminal file manager (y)"
-echo "  • lazydocker  - Terminal UI for Docker (lazydocker)"
+echo "  • http        - HTTPie HTTP client"
+echo "  • claude      - Claude Code CLI"
+echo "  • node/npx    - Node.js LTS (via mise)"
 echo ""
 echo ""
 read -rp "Press Enter to continue..."
