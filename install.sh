@@ -179,8 +179,6 @@ if -F '#{SSH_CONNECTION}' \
 set -g @plugin 'MunifTanjim/tmux-mode-indicator'
 if -F '#{SSH_CONNECTION}' "set -g @theme_color '#ffa500'" "set -g @theme_color '#00aeac'"
 set -g @mode_indicator_empty_mode_style 'fg=#262626,bg=#{@theme_color}'
-set -g status-left "#{tmux_mode_indicator}#[fg=#262626,bg=#{@theme_color},bold]  #(ps -t #{pane_tty} -o user= --sort start | tail -1)@#h #[fg=#{@theme_color},bg=#3a3a3a,nobold]#[fg=#{@theme_color},bg=#3a3a3a]  #S #[fg=#3a3a3a,bg=#262626]"
-run-shell '~/.config/tmux/plugins/tmux-mode-indicator/mode_indicator.tmux'
 
 # zoom pane to new window
 set -g @plugin 'jaclu/tmux-power-zoom'
@@ -259,6 +257,10 @@ bind ? display-popup -E "tmux list-keys -a -N | fzf --ansi --reverse --prompt='�
 
 # Initialize TMUX plugin manager
 run '~/.config/tmux/plugins/tpm/tpm'
+
+# Override tmux-power's status-left with mode indicator (must be after TPM)
+set -g status-left "#{tmux_mode_indicator}#[fg=#262626,bg=#{@theme_color},bold]  #(ps -t #{pane_tty} -o user= --sort start | tail -1)@#h #[fg=#{@theme_color},bg=#3a3a3a,nobold]#[fg=#{@theme_color},bg=#3a3a3a]  #S #[fg=#3a3a3a,bg=#262626]"
+run-shell '~/.config/tmux/plugins/tmux-mode-indicator/mode_indicator.tmux'
 TMUXCONF
 success "tmux config created"
 
