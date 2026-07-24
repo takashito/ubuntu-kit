@@ -72,12 +72,11 @@ if [[ -f ~/.local/bin/zoxide ]]; then
     log_success "zoxide removed"
 fi
 
-# Remove yazi
-if [[ -f /usr/local/bin/yazi ]]; then
-    log_info "Removing yazi..."
-    rm -f /usr/local/bin/yazi
-    rm -f /usr/local/bin/ya
-    log_success "yazi removed"
+# Remove superfile
+if [[ -f /usr/local/bin/spf ]]; then
+    log_info "Removing superfile..."
+    rm -f /usr/local/bin/spf
+    log_success "superfile removed"
 fi
 
 # Remove fzf (manually installed)

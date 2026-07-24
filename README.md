@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/takashito/ubuntu-kit/main/install.s
 | **fd** | `find` | Simpler, faster file finding |
 | **fzf** | - | Fuzzy finder for files and history |
 | **zoxide** | `cd` | Smarter directory jumping |
-| **yazi** | - | Terminal file manager |
+| **superfile** (spf) | - | Terminal file manager |
 | **glow** | - | Markdown renderer |
 | **httpie** | `curl` | User-friendly HTTP client |
 | **jq** | - | JSON processor |
@@ -56,7 +56,7 @@ ls            # eza --color=auto
 la            # eza -al
 lt            # eza --tree
 cd <dir>      # zoxide + auto-list
-y             # yazi file manager (cd on exit)
+y             # superfile file manager (cd on quit)
 ```
 
 ### Modern Replacements

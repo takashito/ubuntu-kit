@@ -59,7 +59,7 @@ apt-get install -y -qq \
 
 success "Package installation complete"
 
-# Install latest fzf (apt version is too old for yazi integration)
+# Install latest fzf (apt version is too old)
 info "Installing fzf (latest)..."
 if ! command -v fzf &>/dev/null || [[ "$(fzf --version | cut -d' ' -f1)" < "0.50" ]]; then
     FZF_VERSION=$(curl -sL https://api.github.com/repos/junegunn/fzf/releases/latest | jq -r .tag_name)
@@ -96,19 +96,19 @@ else
     info "zoxide already installed"
 fi
 
-# Install yazi (terminal file manager)
-info "Installing yazi..."
-if ! command -v yazi &>/dev/null; then
-    YAZI_VERSION=$(curl -sL https://api.github.com/repos/sxyazi/yazi/releases/latest | jq -r '.tag_name')
-    curl -fsSL "https://github.com/sxyazi/yazi/releases/download/${YAZI_VERSION}/yazi-x86_64-unknown-linux-gnu.zip" -o /tmp/yazi.zip
-    unzip -q /tmp/yazi.zip -d /tmp/yazi
-    mv /tmp/yazi/yazi-x86_64-unknown-linux-gnu/yazi /usr/local/bin/
-    mv /tmp/yazi/yazi-x86_64-unknown-linux-gnu/ya /usr/local/bin/
-    chmod +x /usr/local/bin/yazi /usr/local/bin/ya
-    rm -rf /tmp/yazi /tmp/yazi.zip
-    success "yazi installed"
+# Install superfile (terminal file manager)
+info "Installing superfile..."
+if ! command -v spf &>/dev/null; then
+    SPF_VERSION=$(curl -sL https://api.github.com/repos/yorukot/superfile/releases/latest | jq -r '.tag_name')
+    SPF_NAME="superfile-linux-${SPF_VERSION}-amd64"
+    curl -fsSL "https://github.com/yorukot/superfile/releases/download/${SPF_VERSION}/${SPF_NAME}.tar.gz" -o /tmp/spf.tar.gz
+    tar -xzf /tmp/spf.tar.gz -C /tmp
+    mv "/tmp/dist/${SPF_NAME}/spf" /usr/local/bin/
+    chmod +x /usr/local/bin/spf
+    rm -rf /tmp/spf.tar.gz /tmp/dist
+    success "superfile installed"
 else
-    info "yazi already installed"
+    info "superfile already installed"
 fi
 
 # Install tmux plugin manager
@@ -327,15 +327,13 @@ if command -v fzf &>/dev/null; then
     eval "$(fzf --bash)"
 fi
 
-# yazi - terminal file manager wrapper (changes dir on exit)
+# superfile - terminal file manager wrapper (changes dir on exit)
 y() {
-    local tmp
-    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
+    export SPF_LAST_DIR="$(mktemp -t spf-lastdir.XXXXXX)"
+    command spf "$@"
+    [ ! -s "$SPF_LAST_DIR" ] || . "$SPF_LAST_DIR"
+    rm -f -- "$SPF_LAST_DIR"
+    unset SPF_LAST_DIR
 }
 
 # Modern tool aliases
@@ -538,7 +536,7 @@ echo "  • fd          - Fast find alternative (fd)"
 echo "  • jq          - JSON processor"
 echo "  • btop        - System monitor"
 echo "  • tmux        - Terminal multiplexer"
-echo "  • yazi        - Terminal file manager (y)"
+echo "  • superfile   - Terminal file manager (y)"
 echo ""
 echo "Auto-install on first use:"
 echo "  • uv          - Python package installer"
