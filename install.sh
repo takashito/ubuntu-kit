@@ -10,6 +10,9 @@
 
 set -e
 
+# zoxide etc. install into ~/.local/bin — make them visible to this script too
+export PATH="$HOME/.local/bin:$PATH"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -393,7 +396,7 @@ ld() { _autoinstall lazydocker "curl -fsSL https://raw.githubusercontent.com/jes
 mise() { _autoinstall mise "curl -sL https://mise.run | sh" "$@"; }
 uv() { _autoinstall uv "curl -LsSf https://astral.sh/uv/install.sh | sh" "$@"; }
 sqlit() { _autoinstall sqlit "uv tool install sqlit-tui --with psycopg2-binary" "$@"; }
-claude() { _autoinstall claude "curl -fsSL https://claude.ai/install.sh | sh" "$@"; }
+claude() { _autoinstall claude "curl -fsSL https://claude.ai/install.sh | bash" "$@"; }
 node() { _autoinstall node "mise use -g node@lts" "$@"; }
 npx() { _autoinstall npx "mise use -g node@lts" "$@"; }
 
